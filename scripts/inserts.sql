@@ -1,0 +1,2 @@
+-- Cadastro de empresa
+CALL cadastro_empresa ('RESTAURANTE BIT', 'RESTAURANTE BITE LTDA', '79707800000105', '919396900821');
