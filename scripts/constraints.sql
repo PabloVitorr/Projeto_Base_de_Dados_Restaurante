@@ -109,7 +109,7 @@ ALTER TABLE public.itemvenda
 	ON UPDATE NO ACTION
 	ON DELETE NO ACTION;
 
--- comissa
+-- comissao
 ALTER TABLE public.comissao 
 	ADD CONSTRAINT fk_comissao_usuario FOREIGN KEY (usuarioid)
 	REFERENCES public.usuario (id) MATCH SIMPLE
