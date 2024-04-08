@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS public.pais (
 -- mesa
 CREATE TABLE IF NOT EXISTS public.mesa (
 	id BIGSERIAL PRIMARY KEY,
-	codigointerno BIGINT DEFAULT nextval('codigointerno_seq'),
+	identificacao VARCHAR(20) NOT NULL, 
 	status CHAR(1) DEFAULT 'A' NOT NULL,
 	datahoracriacao TIMESTAMP WITH TIME ZONE NOT NULL,
 	empresaid BIGINT

@@ -39,7 +39,7 @@ CREATE OR REPLACE PROCEDURE cadastro_pessoa (
 	IN Cpf VARCHAR(100),
 	IN Email VARCHAR(100),
 	IN Telefone VARCHAR(100),
-	IN Cargoid BIGINT
+	IN CargoId BIGINT
 ) LANGUAGE PLPGSQL AS 
 $$
 BEGIN 
@@ -58,7 +58,7 @@ BEGIN
 		Email,
 		Telefone,
 		CURRENT_TIMESTAMP,
-		Cargoid
+		CargoId
 	);
 END
 $$;
@@ -69,8 +69,8 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 CREATE OR REPLACE PROCEDURE cadastro_usuario (
 	IN Login VARCHAR(255),
 	IN Senha VARCHAR(255),
-	IN Pessoaid BIGINT,
-	IN Empresaid BIGINT
+	IN PessoaId BIGINT,
+	IN EmpresaId BIGINT
 ) LANGUAGE PLPGSQL AS 
 $$
 BEGIN 
@@ -82,10 +82,10 @@ BEGIN
 		empresaid
 	) VALUES (
 		Login,
-		crypt(Senha, gen_salt('bf'::TEXT)),
+		crypt(Senha, gen_salt('bf')),
 		CURRENT_TIMESTAMP,
-		Pessoaid,
-		Empresaid
+		PessoaId,
+		EmpresaId
 	);
 END
 $$;
@@ -104,32 +104,101 @@ $$;
 CREATE OR REPLACE PROCEDURE cadastro_estado (
 	IN Nome VARCHAR(100),
 	IN Sigla CHAR(2),
-	IN Paisid BIGINT
+	IN PaisId BIGINT
 ) LANGUAGE PLPGSQL AS 
 $$
 BEGIN 
-	INSERT INTO public.estado (nome, sigla) VALUES (Nome, Sigla);
+	INSERT INTO public.estado (nome, sigla, paisid) VALUES (Nome, Sigla, PaisId);
 END
 $$;
 
 -- cidade ---------------------------------------------------------------------
 CREATE OR REPLACE PROCEDURE cadastro_cidade (
 	IN Nome VARCHAR(100),
-	IN Estadoid BIGINT
+	IN EstadoId BIGINT
 ) LANGUAGE PLPGSQL AS 
 $$
 BEGIN 
-	INSERT INTO public.cidade (nome, estadoid) VALUES (Nome, Estadoid);
+	INSERT INTO public.cidade (nome, estadoid) VALUES (Nome, EstadoId);
 END
 $$;
 
 -- bairro ---------------------------------------------------------------------
 CREATE OR REPLACE PROCEDURE cadastro_bairro (
 	IN Nome VARCHAR(100),
-	IN Cidadeid BIGINT
+	IN CidadeId BIGINT
 ) LANGUAGE PLPGSQL AS 
 $$
 BEGIN 
-	INSERT INTO public.bairro (nome, cidadeid) VALUES (Nome, Cidadeid);
+	INSERT INTO public.bairro (nome, cidadeid) VALUES (Nome, CidadeId);
+END
+$$;
+
+-- logradouro ---------------------------------------------------------------------
+CREATE OR REPLACE PROCEDURE cadastro_logradouro (
+	IN Nome VARCHAR(100),
+	IN Cep VARCHAR(20),
+	IN BairroId BIGINT
+) LANGUAGE PLPGSQL AS 
+$$
+BEGIN 
+	INSERT INTO public.logradouro (nome, cep, bairroid) VALUES (Nome, Cep, BairroId);
+END
+$$;
+
+-- endereco pessoa ---------------------------------------------------------------------
+CREATE OR REPLACE PROCEDURE cadastro_endereco_pessoa (
+	IN Complemento VARCHAR(100),
+	IN Numero	VARCHAR(20),
+	IN PessoaId BIGINT,
+	IN LogradouroId BIGINT
+) LANGUAGE PLPGSQL AS 
+$$
+BEGIN 
+	INSERT INTO public.endereco (
+		complemento, 
+		numero, 
+		pessoaid, 
+		logradouroid
+	) VALUES (
+		Complemento,
+		Numero,
+		PessoaId,
+		LogradouroId
+	);
+END
+$$;
+
+-- endereco empresa ---------------------------------------------------------------------
+CREATE OR REPLACE PROCEDURE cadastro_endereco_empresa (
+	IN Complemento VARCHAR(100),
+	IN Numero VARCHAR(20),
+	IN EmpresaId BIGINT,
+	IN LogradouroId BIGINT
+) LANGUAGE PLPGSQL AS 
+$$
+BEGIN 
+	INSERT INTO public.endereco (
+		complemento,
+		numero,
+		empresaid,
+		logradouroid
+	) VALUES (
+		Complemento,
+		Numero,
+		EmpresaId,
+		LogradouroId
+	);
+END
+$$;
+
+-- mesa ---------------------------------------------------------------------
+CREATE OR REPLACE PROCEDURE cadastro_mesa (
+	IN Identificacao BIGINT,
+	IN EmpresaId BIGINT
+) LANGUAGE PLPGSQL AS 
+$$
+BEGIN 
+	INSERT INTO public.mesa (identificacao, datahoracriacao, empresaid) VALUES (Identificacao, CURRENT_TIMESTAMP, EmpresaId);
 END
 $$;
