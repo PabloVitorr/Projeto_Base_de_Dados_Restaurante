@@ -33,3 +33,10 @@ CALL cadastro_endereco_empresa ('Bloco 15', '200', 1, 1);
 
 -- mesa
 CALL cadastro_mesa ('01', 1);
+
+-- produto
+CALL cadastro_produto ('9002490243944', 'ENERGETICO RED BULL ENERGY DRINK 250ML', 7.99);
+
+-- estoque 'inventario/contagem'
+CALL inventario_item_estoque (10, 1);
+SELECT * FROM estoque e 
