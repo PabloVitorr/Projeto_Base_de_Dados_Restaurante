@@ -35,8 +35,15 @@ CALL cadastro_endereco_empresa ('Bloco 15', '200', 1, 1);
 CALL cadastro_mesa ('01', 1);
 
 -- produto
-CALL cadastro_produto ('9002490243944', 'ENERGETICO RED BULL ENERGY DRINK 250ML', 7.99);
+CALL cadastro_produto('9002490243944', 'ENERGETICO RED BULL ENERGY DRINK 250ML', 7.99);
 
 -- estoque 'inventario/contagem'
-CALL inventario_item_estoque (10, 1);
-SELECT * FROM estoque e 
+CALL inventario_produto_estoque(0, 1);
+
+-- nota fiscal compra
+CALL recebimento_nota_fiscal_compra (84629, 1, 63.92, '01-10-2024', 2, 2);
+
+-- produto nota fiscal compra
+CALL recebimento_produto_nota_fiscal_compra (1, 7.99, 0.00, 7.99, 1, 1);
+
+-- venda 

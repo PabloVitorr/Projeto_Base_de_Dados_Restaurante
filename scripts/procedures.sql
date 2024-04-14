@@ -194,7 +194,7 @@ $$;
 
 -- mesa ---------------------------------------------------------------------
 CREATE OR REPLACE PROCEDURE cadastro_mesa (
-	IN p_identificacao BIGINT,
+	IN p_identificacao VARCHAR(20),
 	IN p_empresaid BIGINT
 ) LANGUAGE PLPGSQL AS 
 $$
@@ -207,26 +207,25 @@ $$;
 CREATE OR REPLACE PROCEDURE cadastro_produto (
 	IN p_codigobarras VARCHAR(14),
 	IN p_descricao VARCHAR(100),
-	IN p_valor NUMERIC(15,4)
-) LANGUAGE PLPGSQL AS 
+	IN p_valor NUMERIC(15,4)) 
+LANGUAGE PLPGSQL AS 
 $$
 BEGIN 
 	INSERT INTO public.produto (
 		codigobarras,
 		descricao,
 		valor,
-		datahoracriacao
-	) VALUES (
+		datahoracriacao) 
+	VALUES (
 		p_codigobarras,
 		p_descricao,
 		p_valor,
-		CURRENT_TIMESTAMP
-	);
+		CURRENT_TIMESTAMP);
 END
 $$;
 
 -- estoque -----------------------------------------------------------------------
-CREATE OR REPLACE PROCEDURE inventario_item_estoque (
+CREATE OR REPLACE PROCEDURE inventario_produto_estoque (
 	IN p_quantidadeestoque BIGINT,
 	IN p_produtoid BIGINT
 ) LANGUAGE PLPGSQL AS 
@@ -239,3 +238,100 @@ BEGIN
 	END IF;
 END
 $$;
+
+-- notafiscalcompra -----------------------------------------------------------------
+CREATE OR REPLACE PROCEDURE recebimento_nota_fiscal_compra (
+	IN p_numero BIGINT,
+	IN p_serie BIGINT,
+	IN p_valortotal NUMERIC(15,4),
+	IN p_dataemissao DATE,
+	IN p_empresaid BIGINT,
+	IN p_usuarioid BIGINT
+) LANGUAGE PLPGSQL AS 
+$$
+BEGIN 
+	INSERT INTO public.notafiscalcompra (
+		numero, 
+		serie, 
+		valortotal, 
+		dataemissao, 
+		datahorarecebimento, 
+		empresaid, 
+		usuarioid
+	) VALUES (
+		p_numero, 
+		p_serie,
+		p_valortotal,
+		p_dataemissao,
+		CURRENT_TIMESTAMP,
+		p_empresaid,
+		p_usuarioid
+	);
+END
+$$;
+
+-- adiciona estoque --------------------------------------------------------------
+CREATE OR REPLACE PROCEDURE adiciona_estoque (
+	IN p_quantidade BIGINT,
+	IN p_produtoid BIGINT
+) LANGUAGE PLPGSQL AS
+$$
+DECLARE 
+	v_quantidadeanterior BIGINT;
+BEGIN 
+	IF p_produtoid IN (SELECT id FROM estoque)
+		THEN 
+			v_quantidadeanterior := (SELECT quantidadeestoque FROM estoque WHERE id = p_produtoid);
+			UPDATE public.estoque SET quantidadeestoque = p_quantidade + v_quantidadeanterior;
+	ELSE 
+		INSERT INTO public.estoque (quantidadeestoque, produtoid) VALUES (p_quantidade, p_produtoid);
+	END IF;
+END
+$$;
+
+-- remove estoque ----------------------------------------------------------------
+CREATE OR REPLACE PROCEDURE remove_estoque (
+	IN p_quantidade BIGINT,
+	IN p_produtoid BIGINT
+) LANGUAGE PLPGSQL AS 
+$$
+DECLARE 
+	v_quantidadeanterior BIGINT;
+BEGIN
+	v_quantidadeanterior := (SELECT quantidadeestoque FROM estoque WHERE id = p_produtoid);
+	UPDATE public.estoque SET quantidadeestoque = v_quantidadeanterior - p_quantidade;
+END
+$$
+
+-- produtonotafiscalcompra -----------------------------------------------------------
+CREATE OR REPLACE PROCEDURE recebimento_produto_nota_fiscal_compra (
+	IN p_quantidade BIGINT,
+	IN p_valorunitario NUMERIC(15,4),
+	IN p_desconto NUMERIC(15,4),
+	IN p_valortotal NUMERIC(15,4),
+	IN p_produtoid BIGINT,
+	IN p_notafiscalcompraid BIGINT
+) LANGUAGE PLPGSQL AS 
+$$
+BEGIN
+	INSERT INTO public.produtonotafiscalcompra (
+		quantidade,
+		valorunitario,
+		desconto,
+		valortotal,
+		produtoid,
+		notafiscalcompraid
+	) VALUES (
+		p_quantidade,
+		p_valorunitario,
+		p_desconto,
+		p_valortotal,
+		p_produtoid,
+		p_notafiscalcompraid
+	);
+	
+	CALL adiciona_estoque(p_quantidade, p_produtoid);
+END
+$$;
+
+-- venda -----------------------------------------------------------------------------
