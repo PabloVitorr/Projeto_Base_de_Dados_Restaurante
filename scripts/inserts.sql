@@ -56,7 +56,7 @@ CALL cadastro_cidade ('Osasco', 1);
 CALL cadastro_cidade ('Mogi das Cruzes', 1);
 CALL cadastro_cidade ('Carapicuíba', 1);
 CALL cadastro_cidade ('São José dos Campos', 1);
-SELECT * FROM cidade;
+-- SELECT * FROM cidade;
 
 -- bairro
 CALL cadastro_bairro ('Mooca', 1);
@@ -78,7 +78,7 @@ CALL cadastro_logradouro ('Rua Pedro Ronda', '06142260', 5);
 CALL cadastro_logradouro ('Rua Benedito Martins', '08830784', 6);
 CALL cadastro_logradouro ('Rua Geraldo Soares Xavier', '06330130', 7);
 CALL cadastro_logradouro ('Travessa Rodolfo Ferrianci', '12212002', 8);
-SELECT * FROM logradouro;
+-- SELECT * FROM logradouro;
 
 -- endereco pessoa
 CALL cadastro_endereco_pessoa (null, '25', 2, 2);
@@ -150,5 +150,3 @@ CALL registro_venda (9.99, 35, 8, 12);
 -- produto venda
 CALL registro_produto_venda (9.99, 1, 0.00, 9.99, 1, 1);
 -- SELECT * FROM produtovenda;
-
-SELECT * FROM estoque;
