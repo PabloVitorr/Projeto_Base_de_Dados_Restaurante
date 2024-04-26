@@ -1,5 +1,5 @@
 -- empresa -------------------------------------------------------------------
-CREATE OR REPLACE PROCEDURE cadastro_empresa (
+CREATE OR REPLACE PROCEDURE public.cadastro_empresa (
 	IN p_nomefantasia VARCHAR(255), 
 	IN p_razaosocial VARCHAR(255), 
 	IN p_cnpj VARCHAR(14), 
@@ -23,7 +23,7 @@ END
 $$;
 
 -- cargo -------------------------------------------------------------------
-CREATE OR REPLACE PROCEDURE cadastro_cargo (
+CREATE OR REPLACE PROCEDURE public.cadastro_cargo (
 	IN p_nome VARCHAR(100)
 ) AS
 $$
@@ -33,13 +33,12 @@ END
 $$ LANGUAGE PLPGSQL;
 
 -- pessoa -------------------------------------------------------------------
-CREATE OR REPLACE PROCEDURE cadastro_pessoa (
+CREATE OR REPLACE PROCEDURE public.cadastro_pessoa (
 	IN p_nome VARCHAR(100),
 	IN p_sobrenome VARCHAR(100),
-	IN p_cpf VARCHAR(100),
+	IN p_cpf VARCHAR(11),
 	IN p_email VARCHAR(100),
-	IN p_telefone VARCHAR(100),
-	IN p_cargoid BIGINT
+	IN p_telefone VARCHAR(20)
 ) LANGUAGE PLPGSQL AS 
 $$
 BEGIN 
@@ -49,16 +48,14 @@ BEGIN
 		cpf,
 		email,
 		telefone,
-		datahoracriacao,
-		cargoid
+		datahoracriacao
 	) VALUES (
 		p_nome,
 		p_sobrenome,
 		p_cpf,
 		p_email,
 		p_telefone,
-		CURRENT_TIMESTAMP,
-		p_cargoid
+		CURRENT_TIMESTAMP
 	);
 END
 $$;
@@ -66,11 +63,12 @@ $$;
 -- usuario ---------------------------------------------------------------------
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
-CREATE OR REPLACE PROCEDURE cadastro_usuario (
+CREATE OR REPLACE PROCEDURE public.cadastro_usuario (
 	IN p_login VARCHAR(255),
 	IN p_senha VARCHAR(255),
 	IN p_pessoaid BIGINT,
-	IN p_empresaid BIGINT
+	IN p_empresaid BIGINT,
+	IN p_cargoid BIGINT
 ) LANGUAGE PLPGSQL AS 
 $$
 BEGIN 
@@ -79,19 +77,21 @@ BEGIN
 		senha,
 		datahoracriacao,
 		pessoaid,
-		empresaid
+		empresaid,
+		cargoid
 	) VALUES (
 		p_login,
 		crypt(p_senha, gen_salt('bf')),
 		CURRENT_TIMESTAMP,
 		p_pessoaid,
-		p_empresaid
+		p_empresaid,
+		p_cargoid
 	);
 END
 $$;
 
 -- pais ---------------------------------------------------------------------
-CREATE OR REPLACE PROCEDURE cadastro_pais (
+CREATE OR REPLACE PROCEDURE public.cadastro_pais (
 	IN p_nome VARCHAR(100)
 ) LANGUAGE PLPGSQL AS 
 $$
@@ -101,7 +101,7 @@ $$
 $$;
  
 -- estado ---------------------------------------------------------------------
-CREATE OR REPLACE PROCEDURE cadastro_estado (
+CREATE OR REPLACE PROCEDURE public.cadastro_estado (
 	IN p_nome VARCHAR(100),
 	IN p_sigla CHAR(2),
 	IN p_paisid BIGINT
@@ -113,7 +113,7 @@ END
 $$;
 
 -- cidade ---------------------------------------------------------------------
-CREATE OR REPLACE PROCEDURE cadastro_cidade (
+CREATE OR REPLACE PROCEDURE public.cadastro_cidade (
 	IN p_nome VARCHAR(100),
 	IN p_estadoid BIGINT
 ) LANGUAGE PLPGSQL AS 
@@ -124,7 +124,7 @@ END
 $$;
 
 -- bairro ---------------------------------------------------------------------
-CREATE OR REPLACE PROCEDURE cadastro_bairro (
+CREATE OR REPLACE PROCEDURE public.cadastro_bairro (
 	IN p_nome VARCHAR(100),
 	IN p_cidadeid BIGINT
 ) LANGUAGE PLPGSQL AS 
@@ -135,7 +135,7 @@ END
 $$;
 
 -- logradouro ---------------------------------------------------------------------
-CREATE OR REPLACE PROCEDURE cadastro_logradouro (
+CREATE OR REPLACE PROCEDURE public.cadastro_logradouro (
 	IN p_nome VARCHAR(100),
 	IN p_cep VARCHAR(20),
 	IN p_bairroid BIGINT
@@ -147,7 +147,7 @@ END
 $$;
 
 -- endereco pessoa ---------------------------------------------------------------------
-CREATE OR REPLACE PROCEDURE cadastro_endereco_pessoa (
+CREATE OR REPLACE PROCEDURE public.cadastro_endereco_pessoa (
 	IN p_complemento VARCHAR(100),
 	IN p_numero	VARCHAR(20),
 	IN p_pessoaid BIGINT,
@@ -170,7 +170,7 @@ END
 $$;
 
 -- endereco empresa ---------------------------------------------------------------------
-CREATE OR REPLACE PROCEDURE cadastro_endereco_empresa (
+CREATE OR REPLACE PROCEDURE public.cadastro_endereco_empresa (
 	IN p_complemento VARCHAR(100),
 	IN p_numero VARCHAR(20),
 	IN p_empresaid BIGINT,
@@ -193,7 +193,7 @@ END
 $$;
 
 -- mesa ---------------------------------------------------------------------
-CREATE OR REPLACE PROCEDURE cadastro_mesa (
+CREATE OR REPLACE PROCEDURE public.cadastro_mesa (
 	IN p_identificacao VARCHAR(20),
 	IN p_empresaid BIGINT
 ) LANGUAGE PLPGSQL AS 
@@ -204,7 +204,7 @@ END
 $$;
  
 -- produto ------------------------------------------------------------------
-CREATE OR REPLACE PROCEDURE cadastro_produto (
+CREATE OR REPLACE PROCEDURE public.cadastro_produto (
 	IN p_codigobarras VARCHAR(14),
 	IN p_descricao VARCHAR(100),
 	IN p_valor NUMERIC(15,4)) 
@@ -225,7 +225,7 @@ END
 $$;
 
 -- estoque -----------------------------------------------------------------------
-CREATE OR REPLACE PROCEDURE inventario_produto_estoque (
+CREATE OR REPLACE PROCEDURE public.inventario_produto_estoque (
 	IN p_quantidadeestoque BIGINT,
 	IN p_produtoid BIGINT
 ) LANGUAGE PLPGSQL AS 
@@ -240,7 +240,7 @@ END
 $$;
 
 -- notafiscalcompra -----------------------------------------------------------------
-CREATE OR REPLACE PROCEDURE recebimento_nota_fiscal_compra (
+CREATE OR REPLACE PROCEDURE public.recebimento_nota_fiscal_compra (
 	IN p_numero BIGINT,
 	IN p_serie BIGINT,
 	IN p_valortotal NUMERIC(15,4),
@@ -271,40 +271,55 @@ END
 $$;
 
 -- adiciona estoque --------------------------------------------------------------
-CREATE OR REPLACE PROCEDURE adiciona_estoque (
+CREATE OR REPLACE PROCEDURE public.adiciona_estoque (
 	IN p_quantidade BIGINT,
 	IN p_produtoid BIGINT
 ) LANGUAGE PLPGSQL AS
 $$
-DECLARE 
-	v_quantidadeanterior BIGINT;
 BEGIN 
-	IF p_produtoid IN (SELECT id FROM estoque)
+	IF p_produtoid IN (SELECT produtoid FROM estoque)
 		THEN 
-			v_quantidadeanterior := (SELECT quantidadeestoque FROM estoque WHERE id = p_produtoid);
-			UPDATE public.estoque SET quantidadeestoque = p_quantidade + v_quantidadeanterior;
+			UPDATE public.estoque SET quantidadeestoque = (quantidadeestoque + p_quantidade) WHERE produtoid = p_produtoid;
 	ELSE 
 		INSERT INTO public.estoque (quantidadeestoque, produtoid) VALUES (p_quantidade, p_produtoid);
 	END IF;
 END
 $$;
 
+-- adiciona estoque alternativa ------------------------------------------------
+/*
+CREATE OR REPLACE PROCEDURE public.adiciona_estoque (
+	IN p_quantidade BIGINT,
+	IN p_produtoid BIGINT	
+) LANGUAGE PLPGSQL AS 
+$$
+DECLARE 
+	v_contagem INT;
+BEGIN 
+	SELECT count(produtoid) INTO v_contagem FROM public.estoque WHERE produtoid = p_produtoid;
+	
+	IF v_contagem > 0 THEN 
+		UPDATE public.estoque SET quantidadeestoque = (quantidadeestoque + p_quantidade) WHERE produtoid = p_produtoid;
+	ELSE 
+		INSERT INTO public.estoque (quantidadeestoque, produtoid) VALUES (p_quantidade, p_produtoid);
+	END IF;
+END
+$$;
+*/
+
 -- remove estoque ----------------------------------------------------------------
-CREATE OR REPLACE PROCEDURE remove_estoque (
+CREATE OR REPLACE PROCEDURE public.remove_estoque (
 	IN p_quantidade BIGINT,
 	IN p_produtoid BIGINT
 ) LANGUAGE PLPGSQL AS 
 $$
-DECLARE 
-	v_quantidadeanterior BIGINT;
 BEGIN
-	v_quantidadeanterior := (SELECT quantidadeestoque FROM estoque WHERE id = p_produtoid);
-	UPDATE public.estoque SET quantidadeestoque = v_quantidadeanterior - p_quantidade;
+	UPDATE public.estoque SET quantidadeestoque = (quantidadeestoque - p_quantidade) WHERE produtoid = p_produtoid;
 END
 $$
 
 -- produtonotafiscalcompra -----------------------------------------------------------
-CREATE OR REPLACE PROCEDURE recebimento_produto_nota_fiscal_compra (
+CREATE OR REPLACE PROCEDURE public.recebimento_produto_nota_fiscal_compra (
 	IN p_quantidade BIGINT,
 	IN p_valorunitario NUMERIC(15,4),
 	IN p_desconto NUMERIC(15,4),
@@ -335,3 +350,57 @@ END
 $$;
 
 -- venda -----------------------------------------------------------------------------
+CREATE OR REPLACE PROCEDURE public.registro_venda (
+	IN p_valortotal NUMERIC(15,4),
+	IN p_mesaid BIGINT,
+	IN p_usuarioid BIGINT,
+	IN p_pessoaid BIGINT
+) LANGUAGE PLPGSQL AS 
+$$
+BEGIN 
+	INSERT INTO public.venda (
+		valortotal, 
+		datahoracriacao, 
+		mesaid, 
+		usuarioid, 
+		pessoaid
+	) VALUES (
+		p_valortotal, 
+		CURRENT_TIMESTAMP, 
+		p_mesaid, 
+		p_usuarioid, 
+		p_pessoaid
+	);
+END
+$$;
+
+-- produtovenda ---------------------------------------------------------------------------
+CREATE OR REPLACE PROCEDURE public.registro_produto_venda (
+	IN p_valorunitario NUMERIC(15,4),
+	IN p_quantidade BIGINT,
+	IN p_desconto NUMERIC(15,4),
+	IN p_valortotal NUMERIC(15,4),
+	IN p_vendaid BIGINT,
+	IN p_produtoid BIGINT
+) LANGUAGE PLPGSQL AS 
+$$
+BEGIN 
+	INSERT INTO public.produtovenda (
+		valorunitario,
+		quantidade,
+		desconto,
+		valortotal,
+		vendaid,
+		produtoid
+	) VALUES (
+		p_valorunitario,
+		p_quantidade,
+		p_desconto,
+		p_valortotal,
+		p_vendaid,
+		p_produtoid
+	);
+
+	CALL public.remove_estoque(p_quantidade, p_produtoid); 
+END
+$$;

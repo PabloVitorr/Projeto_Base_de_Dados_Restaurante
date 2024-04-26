@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS public.empresa (
 	cnpj VARCHAR(14) NOT NULL,
 	inscricaoestadual VARCHAR(15)
 );
+-- SELECT * FROM empresa;
 
 -- pessoa
 CREATE TABLE IF NOT EXISTS public.pessoa (
@@ -19,9 +20,9 @@ CREATE TABLE IF NOT EXISTS public.pessoa (
 	cpf VARCHAR(11),
 	email VARCHAR(100),
 	telefone VARCHAR(20),
-	datahoracriacao TIMESTAMP WITH TIME ZONE NOT NULL,
-	cargoid BIGINT
+	datahoracriacao TIMESTAMP WITH TIME ZONE NOT NULL
 );
+-- SELECT * FROM pessoa;
 
 -- cargo
 CREATE TABLE IF NOT EXISTS public.cargo (
@@ -30,6 +31,7 @@ CREATE TABLE IF NOT EXISTS public.cargo (
 	status CHAR(1) DEFAULT 'A' NOT NULL,
 	nome VARCHAR(100) NOT NULL
 );
+-- SELECT * FROM cargo;
 
 -- usuario
 CREATE TABLE IF NOT EXISTS public.usuario (
@@ -39,9 +41,11 @@ CREATE TABLE IF NOT EXISTS public.usuario (
 	login VARCHAR(255) NOT NULL,
 	senha VARCHAR(255) NOT NULL,
 	datahoracriacao TIMESTAMP WITH TIME ZONE NOT NULL,
-	pessoaid BIGINT UNIQUE,
-	empresaid BIGINT
+	pessoaid BIGINT UNIQUE NOT NULL,
+	empresaid BIGINT NOT NULL,
+	cargoid BIGINT NOT NULL
 );
+-- SELECT * FROM usuario;
 
 -- endereco
 CREATE TABLE IF NOT EXISTS public.endereco (
@@ -50,8 +54,9 @@ CREATE TABLE IF NOT EXISTS public.endereco (
 	numero VARCHAR(20),
 	pessoaid BIGINT UNIQUE,
 	empresaid BIGINT UNIQUE,
-	logradouroid BIGINT
+	logradouroid BIGINT NOT NULL
 );
+-- SELECT * FROM endereco;
 
 -- logradouro	
 CREATE TABLE IF NOT EXISTS public.logradouro (
@@ -59,24 +64,27 @@ CREATE TABLE IF NOT EXISTS public.logradouro (
 	status CHAR(1) DEFAULT 'A' NOT NULL,
 	nome VARCHAR(100) NOT NULL,
 	cep VARCHAR(8) NOT NULL,
-	bairroid BIGINT
+	bairroid BIGINT NOT NULL
 );
+-- SELECT * FROM logradouro;
 
 -- bairro
 CREATE TABLE IF NOT EXISTS public.bairro (
 	id BIGSERIAL PRIMARY KEY,
 	status CHAR(1) DEFAULT 'A' NOT NULL,
 	nome VARCHAR(100) NOT NULL,
-	cidadeid BIGINT
+	cidadeid BIGINT NOT NULL
 );
+-- SELECT * FROM bairro;
 
 -- cidade
 CREATE TABLE IF NOT EXISTS public.cidade (
 	id BIGSERIAL PRIMARY KEY,
 	status CHAR(1) DEFAULT 'A' NOT NULL,
 	nome VARCHAR(100) NOT NULL,
-	estadoid BIGINT
+	estadoid BIGINT NOT null
 );
+-- SELECT * FROM cidade;
 
 -- estado
 CREATE TABLE IF NOT EXISTS public.estado (
@@ -84,8 +92,9 @@ CREATE TABLE IF NOT EXISTS public.estado (
 	status CHAR(1) DEFAULT 'A' NOT NULL,
 	nome VARCHAR(100) NOT NULL,
 	sigla CHAR(2) NOT NULL,
-	paisid BIGINT
+	paisid BIGINT NOT NULL
 );
+-- SELECT * FROM estado;
 
 -- pais
 CREATE TABLE IF NOT EXISTS public.pais (
@@ -93,15 +102,18 @@ CREATE TABLE IF NOT EXISTS public.pais (
 	status CHAR(1) DEFAULT 'A' NOT NULL,
 	nome VARCHAR(100) NOT NULL
 );
+-- SELECT * FROM pais;
 
 -- mesa
 CREATE TABLE IF NOT EXISTS public.mesa (
 	id BIGSERIAL PRIMARY KEY,
+	codigointerno BIGINT DEFAULT nextval('codigointerno_seq'),
 	identificacao VARCHAR(20) NOT NULL, 
 	status CHAR(1) DEFAULT 'A' NOT NULL,
 	datahoracriacao TIMESTAMP WITH TIME ZONE NOT NULL,
-	empresaid BIGINT
+	empresaid BIGINT NOT NULL
 );
+-- SELECT * FROM mesa;
 
 -- venda
 CREATE TABLE IF NOT EXISTS public.venda (
@@ -110,21 +122,23 @@ CREATE TABLE IF NOT EXISTS public.venda (
 	status CHAR(1) DEFAULT 'F' NOT NULL,
 	valortotal NUMERIC(15,4) NOT NULL,
 	datahoracriacao TIMESTAMP WITH TIME ZONE NOT NULL,
-	mesaid BIGINT,
-	usuarioid BIGINT,
+	mesaid BIGINT NOT NULL,
+	usuarioid BIGINT NOT NULL,
 	pessoaid BIGINT
 );
+-- SELECT * FROM venda;
 
--- itemvenda
-CREATE TABLE IF NOT EXISTS public.itemvenda (
+-- produtovenda
+CREATE TABLE IF NOT EXISTS public.produtovenda (
 	id BIGSERIAL PRIMARY KEY,
 	valorunitario NUMERIC(15,4) NOT NULL,
 	quantidade BIGINT NOT NULL,
 	desconto NUMERIC(15,4) NOT NULL,
 	valortotal NUMERIC(15,4) NOT NULL,
-	vendaid BIGINT,
-	produtoid BIGINT
+	vendaid BIGINT NOT NULL,
+	produtoid BIGINT NOT NULL
 );
+-- SELECT * FROM produtovenda;
 
 -- comissao
 CREATE TABLE IF NOT EXISTS public.comissao (
@@ -133,27 +147,31 @@ CREATE TABLE IF NOT EXISTS public.comissao (
 	status CHAR(1) DEFAULT 'D' NOT NULL,
 	valor NUMERIC(15,4) NOT NULL,
 	datahoracriacao TIMESTAMP WITH TIME ZONE NOT NULL,
-	usuarioid BIGINT,
-	vendaid BIGINT UNIQUE
+	usuarioid BIGINT NOT NULL,
+	vendaid BIGINT UNIQUE NOT NULL 
 );
+SELECT * FROM comissao;
 
 -- produto
 CREATE TABLE IF NOT EXISTS public.produto (
 	id BIGSERIAL PRIMARY KEY,
 	codigointerno BIGINT DEFAULT nextval('codigointerno_seq'),
 	status CHAR(1) DEFAULT 'A' NOT NULL,
-	codigobarras VARCHAR(14) NOT NULL,
+	codigobarras VARCHAR(14),
 	descricao VARCHAR(100) NOT NULL,
-	valor NUMERIC(15,2) NOT NULL,
+	valorvenda NUMERIC(15,4) NOT NULL,
+	valorcusto NUMERIC(15,4) NOT NULL,
 	datahoracriacao TIMESTAMP WITH TIME ZONE NOT NULL
 );
+-- SELECT * FROM produto;
 
 -- estoque	
 CREATE TABLE IF NOT EXISTS public.estoque (
 	id BIGSERIAL PRIMARY KEY,
 	quantidadeestoque BIGINT NOT NULL,
-	produtoid BIGINT UNIQUE
+	produtoid BIGINT UNIQUE NOT NULL
 );
+-- SELECT * FROM estoque;
 
 -- notafiscalcompra
 CREATE TABLE IF NOT EXISTS public.notafiscalcompra (
@@ -164,9 +182,10 @@ CREATE TABLE IF NOT EXISTS public.notafiscalcompra (
 	valortotal NUMERIC(15,4) NOT NULL,
 	dataemissao DATE NOT NULL,
 	datahorarecebimento TIMESTAMP WITH TIME ZONE NOT NULL,
-	empresaid BIGINT,
-	usuarioid BIGINT
+	empresaid BIGINT NOT NULL,
+	usuarioid BIGINT NOT NULL
 );
+-- SELECT * FROM notafiscalcompra;
 
 -- produtonotafiscalcompra	
 CREATE TABLE IF NOT EXISTS public.produtonotafiscalcompra (
@@ -175,6 +194,6 @@ CREATE TABLE IF NOT EXISTS public.produtonotafiscalcompra (
 	valorunitario NUMERIC(15,4) NOT NULL,
 	desconto NUMERIC(15,4) NOT NULL,
 	valortotal NUMERIC(15,4) NOT NULL,
-	produtoid BIGINT,
-	notafiscalcompraid BIGINT
+	produtoid BIGINT NOT NULL,
+	notafiscalcompraid BIGINT NOT null
 );

@@ -3,10 +3,6 @@ ALTER TABLE public.empresa ADD CHECK (status = 'A' OR status = 'I' );
 
 -- pessoa
 ALTER TABLE public.pessoa
-	ADD CONSTRAINT fk_pessoa_cargo FOREIGN KEY (cargoid)
-	REFERENCES public.cargo (id) MATCH SIMPLE
-	ON UPDATE NO ACTION
-	ON DELETE NO ACTION,
 	ADD CHECK (status = 'A' OR status = 'I' );
 
 -- cargo
@@ -20,6 +16,10 @@ ALTER TABLE public.usuario
 	ON DELETE NO ACTION,
 	ADD CONSTRAINT fk_usuario_empresa FOREIGN KEY (empresaid)
 	REFERENCES public.empresa (id) MATCH SIMPLE
+	ON UPDATE NO ACTION
+	ON DELETE NO ACTION,
+	ADD CONSTRAINT fk_usuario_cargo FOREIGN KEY (cargoid)
+	REFERENCES public.cargo (id) MATCH SIMPLE
 	ON UPDATE NO ACTION
 	ON DELETE NO ACTION,
 	ADD CHECK (status = 'A' OR status = 'I' );
@@ -98,13 +98,13 @@ ALTER TABLE public.venda
 	ON DELETE NO ACTION,
 	ADD CHECK (status = 'F' OR status = 'D');
 
--- itemvenda
-ALTER TABLE public.itemvenda 
-	ADD CONSTRAINT fk_itemvenda_venda FOREIGN KEY (vendaid)
+-- produtovenda
+ALTER TABLE public.produtovenda 
+	ADD CONSTRAINT fk_produtovenda_venda FOREIGN KEY (vendaid)
 	REFERENCES public.venda (id) MATCH SIMPLE
 	ON UPDATE NO ACTION
 	ON DELETE NO ACTION,
-	ADD CONSTRAINT fk_itemvenda_produto FOREIGN KEY (produtoid)
+	ADD CONSTRAINT fk_produtovenda_produto FOREIGN KEY (produtoid)
 	REFERENCES public.produto (id) MATCH SIMPLE
 	ON UPDATE NO ACTION
 	ON DELETE NO ACTION;
