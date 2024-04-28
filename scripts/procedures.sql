@@ -270,54 +270,6 @@ BEGIN
 END
 $$;
 
--- adiciona estoque --------------------------------------------------------------
-CREATE OR REPLACE PROCEDURE public.adiciona_estoque (
-	IN p_quantidade BIGINT,
-	IN p_produtoid BIGINT
-) LANGUAGE PLPGSQL AS
-$$
-BEGIN 
-	IF p_produtoid IN (SELECT produtoid FROM estoque)
-		THEN 
-			UPDATE public.estoque SET quantidadeestoque = (quantidadeestoque + p_quantidade) WHERE produtoid = p_produtoid;
-	ELSE 
-		INSERT INTO public.estoque (quantidadeestoque, produtoid) VALUES (p_quantidade, p_produtoid);
-	END IF;
-END
-$$;
-
--- adiciona estoque alternativa ------------------------------------------------
-/*
-CREATE OR REPLACE PROCEDURE public.adiciona_estoque (
-	IN p_quantidade BIGINT,
-	IN p_produtoid BIGINT	
-) LANGUAGE PLPGSQL AS 
-$$
-DECLARE 
-	v_contagem INT;
-BEGIN 
-	SELECT count(produtoid) INTO v_contagem FROM public.estoque WHERE produtoid = p_produtoid;
-	
-	IF v_contagem > 0 THEN 
-		UPDATE public.estoque SET quantidadeestoque = (quantidadeestoque + p_quantidade) WHERE produtoid = p_produtoid;
-	ELSE 
-		INSERT INTO public.estoque (quantidadeestoque, produtoid) VALUES (p_quantidade, p_produtoid);
-	END IF;
-END
-$$;
-*/
-
--- remove estoque ----------------------------------------------------------------
-CREATE OR REPLACE PROCEDURE public.remove_estoque (
-	IN p_quantidade BIGINT,
-	IN p_produtoid BIGINT
-) LANGUAGE PLPGSQL AS 
-$$
-BEGIN
-	UPDATE public.estoque SET quantidadeestoque = (quantidadeestoque - p_quantidade) WHERE produtoid = p_produtoid;
-END
-$$
-
 -- produtonotafiscalcompra -----------------------------------------------------------
 CREATE OR REPLACE PROCEDURE public.recebimento_produto_nota_fiscal_compra (
 	IN p_quantidade BIGINT,
@@ -344,8 +296,6 @@ BEGIN
 		p_produtoid,
 		p_notafiscalcompraid
 	);
-	
-	CALL adiciona_estoque(p_quantidade, p_produtoid);
 END
 $$;
 
@@ -400,7 +350,5 @@ BEGIN
 		p_vendaid,
 		p_produtoid
 	);
-
-	CALL public.remove_estoque(p_quantidade, p_produtoid); 
 END
 $$;

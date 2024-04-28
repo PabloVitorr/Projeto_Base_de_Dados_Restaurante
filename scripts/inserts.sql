@@ -111,7 +111,7 @@ CALL cadastro_mesa ('09', 1);
 CALL cadastro_mesa ('10', 1);
 CALL cadastro_mesa ('BALCÃO', 1);
 CALL cadastro_mesa ('CAIXA', 1);
--- SELECT * FROM mesa;
+SELECT * FROM mesa;
 
 -- produto
 CALL cadastro_produto ('9002490243944', 'ENÉRGETICO RED BULL ENERGY DRINK 250ML', 11.99);
@@ -122,17 +122,16 @@ CALL cadastro_produto ('9002490229160', 'ENERGÉTICO RED BULL TROPICAL EDITION S
 CALL cadastro_produto ('9002490250270', 'ENERGÉTICO RED BULL SUMMER EDITION SABOR PITAYA 250ML', 11.99);
 CALL cadastro_produto ('9002490240875', 'ENERGÉTICO RED BULL COCO EDITION SABOR COCO E AÇAÍ 250ML', 11.99);
 CALL cadastro_produto ('9002490235192', 'ENERGÉTICO RED BULL AÇAÍ EDITION SABOR AÇAÍ 250ML', 11.99);
--- SELECT * FROM produto;
 
 -- estoque 'inventario/contagem'
 CALL inventario_produto_estoque(0, 1);
--- SELECT * FROM estoque;
+SELECT * FROM estoque;
 
 -- nota fiscal compra
 CALL recebimento_nota_fiscal_compra (84629, 1, 287.52, '10-01-2024', 2, 11);
--- SELECT * FROM notafiscalcompra;
+SELECT * FROM notafiscalcompra;
 
--- produto nota fiscal compra
+-- nota fiscal compra
 CALL recebimento_produto_nota_fiscal_compra (6, 5.99, 0.00, 35.94, 7, 1);
 CALL recebimento_produto_nota_fiscal_compra (6, 5.99, 0.00, 35.94, 8, 1);
 CALL recebimento_produto_nota_fiscal_compra (6, 5.99, 0.00, 35.94, 6, 1);
@@ -141,12 +140,12 @@ CALL recebimento_produto_nota_fiscal_compra (6, 5.99, 0.00, 35.94, 3, 1);
 CALL recebimento_produto_nota_fiscal_compra (6, 5.99, 0.00, 35.94, 4, 1);
 CALL recebimento_produto_nota_fiscal_compra (6, 5.99, 0.00, 35.94, 2, 1);
 CALL recebimento_produto_nota_fiscal_compra (6, 5.99, 0.00, 35.94, 1, 1);
--- SELECT * FROM produtonotafiscalcompra;
+SELECT * FROM produtonotafiscalcompra;
 
 -- venda 
 CALL registro_venda (9.99, 35, 8, 12);
--- SELECT * FROM venda;
+SELECT * FROM venda;
 
 -- produto venda
 CALL registro_produto_venda (9.99, 1, 0.00, 9.99, 1, 1);
--- SELECT * FROM produtovenda;
+SELECT * FROM produtovenda;
