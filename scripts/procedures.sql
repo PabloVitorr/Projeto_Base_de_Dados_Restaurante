@@ -1,10 +1,10 @@
--- empresa -------------------------------------------------------------------
+-- empresa --------------------------------------------------------------------
 CREATE OR REPLACE PROCEDURE public.cadastro_empresa (
 	IN p_nomefantasia VARCHAR(255), 
 	IN p_razaosocial VARCHAR(255), 
 	IN p_cnpj VARCHAR(14), 
 	IN p_inscricaoestadual VARCHAR(15)
-) LANGUAGE PLPGSQL AS 
+) LANGUAGE PLpgSQL AS 
 $$
 BEGIN
 	INSERT INTO public.empresa (
@@ -19,27 +19,27 @@ BEGIN
     p_cnpj, 
     p_inscricaoestadual
   );
-END
+END;
 $$;
 
--- cargo -------------------------------------------------------------------
+-- cargo ----------------------------------------------------------------------
 CREATE OR REPLACE PROCEDURE public.cadastro_cargo (
 	IN p_nome VARCHAR(100)
-) AS
+) LANGUAGE PLpgSQL AS
 $$
 BEGIN
 	INSERT INTO public.cargo (nome) VALUES (p_nome);
-END
-$$ LANGUAGE PLPGSQL;
+END;
+$$;
 
--- pessoa -------------------------------------------------------------------
+-- pessoa ---------------------------------------------------------------------
 CREATE OR REPLACE PROCEDURE public.cadastro_pessoa (
 	IN p_nome VARCHAR(100),
 	IN p_sobrenome VARCHAR(100),
 	IN p_cpf VARCHAR(11),
 	IN p_email VARCHAR(100),
 	IN p_telefone VARCHAR(20)
-) LANGUAGE PLPGSQL AS 
+) LANGUAGE PLpgSQL AS 
 $$
 BEGIN 
 	INSERT INTO public.pessoa (
@@ -57,10 +57,10 @@ BEGIN
 		p_telefone,
 		CURRENT_TIMESTAMP
 	);
-END
+END;
 $$;
 
--- usuario ---------------------------------------------------------------------
+-- usuario --------------------------------------------------------------------
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 CREATE OR REPLACE PROCEDURE public.cadastro_usuario (
@@ -69,7 +69,7 @@ CREATE OR REPLACE PROCEDURE public.cadastro_usuario (
 	IN p_pessoaid BIGINT,
 	IN p_empresaid BIGINT,
 	IN p_cargoid BIGINT
-) LANGUAGE PLPGSQL AS 
+) LANGUAGE PLpgSQL AS 
 $$
 BEGIN 
 	INSERT INTO public.usuario (
@@ -87,17 +87,17 @@ BEGIN
 		p_empresaid,
 		p_cargoid
 	);
-END
+END;
 $$;
 
--- pais ---------------------------------------------------------------------
+-- pais -----------------------------------------------------------------------
 CREATE OR REPLACE PROCEDURE public.cadastro_pais (
 	IN p_nome VARCHAR(100)
-) LANGUAGE PLPGSQL AS 
+) LANGUAGE PLpgSQL AS 
 $$
 	BEGIN 
 		INSERT INTO public.pais (nome) VALUES (p_nome);
-	END
+	END;
 $$;
  
 -- estado ---------------------------------------------------------------------
@@ -105,54 +105,54 @@ CREATE OR REPLACE PROCEDURE public.cadastro_estado (
 	IN p_nome VARCHAR(100),
 	IN p_sigla CHAR(2),
 	IN p_paisid BIGINT
-) LANGUAGE PLPGSQL AS 
+) LANGUAGE PLpgSQL AS 
 $$
 BEGIN 
 	INSERT INTO public.estado (nome, sigla, paisid) VALUES (p_nome, p_sigla, p_paisid);
-END
+END;
 $$;
 
 -- cidade ---------------------------------------------------------------------
 CREATE OR REPLACE PROCEDURE public.cadastro_cidade (
 	IN p_nome VARCHAR(100),
 	IN p_estadoid BIGINT
-) LANGUAGE PLPGSQL AS 
-$$
+) LANGUAGE PLpgSQL AS 
+$$;
 BEGIN 
 	INSERT INTO public.cidade (nome, estadoid) VALUES (p_nome, p_estadoid);
-END
+END;
 $$;
 
 -- bairro ---------------------------------------------------------------------
 CREATE OR REPLACE PROCEDURE public.cadastro_bairro (
 	IN p_nome VARCHAR(100),
 	IN p_cidadeid BIGINT
-) LANGUAGE PLPGSQL AS 
+) LANGUAGE PLpgSQL AS 
 $$
 BEGIN 
 	INSERT INTO public.bairro (nome, cidadeid) VALUES (p_nome, p_cidadeid);
-END
+END;
 $$;
 
--- logradouro ---------------------------------------------------------------------
+-- logradouro -----------------------------------------------------------------
 CREATE OR REPLACE PROCEDURE public.cadastro_logradouro (
 	IN p_nome VARCHAR(100),
 	IN p_cep VARCHAR(20),
 	IN p_bairroid BIGINT
-) LANGUAGE PLPGSQL AS 
+) LANGUAGE PLpgSQL AS 
 $$
 BEGIN 
 	INSERT INTO public.logradouro (nome, cep, bairroid) VALUES (p_nome, p_cep, p_bairroid);
-END
+END;
 $$;
 
--- endereco pessoa ---------------------------------------------------------------------
+-- endereco pessoa ------------------------------------------------------------
 CREATE OR REPLACE PROCEDURE public.cadastro_endereco_pessoa (
 	IN p_complemento VARCHAR(100),
 	IN p_numero	VARCHAR(20),
 	IN p_pessoaid BIGINT,
 	IN p_logradouroid BIGINT
-) LANGUAGE PLPGSQL AS 
+) LANGUAGE PLpgSQL AS 
 $$
 BEGIN 
 	INSERT INTO public.endereco (
@@ -166,16 +166,16 @@ BEGIN
 		p_pessoaid,
 		p_logradouroid
 	);
-END
+END;
 $$;
 
--- endereco empresa ---------------------------------------------------------------------
+-- endereco empresa -----------------------------------------------------------
 CREATE OR REPLACE PROCEDURE public.cadastro_endereco_empresa (
 	IN p_complemento VARCHAR(100),
 	IN p_numero VARCHAR(20),
 	IN p_empresaid BIGINT,
 	IN p_logradouroid BIGINT
-) LANGUAGE PLPGSQL AS 
+) LANGUAGE PLpgSQL AS 
 $$
 BEGIN 
 	INSERT INTO public.endereco (
@@ -189,26 +189,26 @@ BEGIN
 		p_empresaid,
 		p_logradouroid
 	);
-END
+END;
 $$;
 
--- mesa ---------------------------------------------------------------------
+-- mesa -----------------------------------------------------------------------
 CREATE OR REPLACE PROCEDURE public.cadastro_mesa (
 	IN p_identificacao VARCHAR(20),
 	IN p_empresaid BIGINT
-) LANGUAGE PLPGSQL AS 
+) LANGUAGE PLpgSQL AS 
 $$
 BEGIN 
 	INSERT INTO public.mesa (identificacao, datahoracriacao, empresaid) VALUES (p_identificacao, CURRENT_TIMESTAMP, p_empresaid);
-END
+END;
 $$;
  
--- produto ------------------------------------------------------------------
+-- produto --------------------------------------------------------------------
 CREATE OR REPLACE PROCEDURE public.cadastro_produto (
 	IN p_codigobarras VARCHAR(14),
 	IN p_descricao VARCHAR(100),
 	IN p_valor NUMERIC(15,4)) 
-LANGUAGE PLPGSQL AS 
+LANGUAGE PLpgSQL AS 
 $$
 BEGIN 
 	INSERT INTO public.produto (
@@ -221,14 +221,14 @@ BEGIN
 		p_descricao,
 		p_valor,
 		CURRENT_TIMESTAMP);
-END
+END;
 $$;
 
--- estoque -----------------------------------------------------------------------
+-- estoque --------------------------------------------------------------------
 CREATE OR REPLACE PROCEDURE public.inventario_produto_estoque (
 	IN p_quantidadeestoque BIGINT,
 	IN p_produtoid BIGINT
-) LANGUAGE PLPGSQL AS 
+) LANGUAGE PLpgSQL AS 
 $$
 BEGIN 
 	IF p_produtoid IN (SELECT produtoid FROM estoque) 
@@ -236,10 +236,10 @@ BEGIN
 	ELSE 
 		INSERT INTO estoque (quantidadeestoque, produtoid) VALUES (p_quantidadeestoque, p_produtoid);
 	END IF;
-END
+END;
 $$;
 
--- notafiscalcompra -----------------------------------------------------------------
+-- notafiscalcompra -----------------------------------------------------------
 CREATE OR REPLACE PROCEDURE public.recebimento_nota_fiscal_compra (
 	IN p_numero BIGINT,
 	IN p_serie BIGINT,
@@ -247,7 +247,7 @@ CREATE OR REPLACE PROCEDURE public.recebimento_nota_fiscal_compra (
 	IN p_dataemissao DATE,
 	IN p_empresaid BIGINT,
 	IN p_usuarioid BIGINT
-) LANGUAGE PLPGSQL AS 
+) LANGUAGE PLpgSQL AS 
 $$
 BEGIN 
 	INSERT INTO public.notafiscalcompra (
@@ -267,10 +267,10 @@ BEGIN
 		p_empresaid,
 		p_usuarioid
 	);
-END
+END;
 $$;
 
--- produtonotafiscalcompra -----------------------------------------------------------
+-- produtonotafiscalcompra ----------------------------------------------------
 CREATE OR REPLACE PROCEDURE public.recebimento_produto_nota_fiscal_compra (
 	IN p_quantidade BIGINT,
 	IN p_valorunitario NUMERIC(15,4),
@@ -278,7 +278,7 @@ CREATE OR REPLACE PROCEDURE public.recebimento_produto_nota_fiscal_compra (
 	IN p_valortotal NUMERIC(15,4),
 	IN p_produtoid BIGINT,
 	IN p_notafiscalcompraid BIGINT
-) LANGUAGE PLPGSQL AS 
+) LANGUAGE PLpgSQL AS 
 $$
 BEGIN
 	INSERT INTO public.produtonotafiscalcompra (
@@ -296,16 +296,16 @@ BEGIN
 		p_produtoid,
 		p_notafiscalcompraid
 	);
-END
+END;
 $$;
 
--- venda -----------------------------------------------------------------------------
+-- venda ----------------------------------------------------------------------
 CREATE OR REPLACE PROCEDURE public.registro_venda (
 	IN p_valortotal NUMERIC(15,4),
 	IN p_mesaid BIGINT,
 	IN p_usuarioid BIGINT,
 	IN p_pessoaid BIGINT
-) LANGUAGE PLPGSQL AS 
+) LANGUAGE PLpgSQL AS 
 $$
 BEGIN 
 	INSERT INTO public.venda (
@@ -321,10 +321,10 @@ BEGIN
 		p_usuarioid, 
 		p_pessoaid
 	);
-END
+END;
 $$;
 
--- produtovenda ---------------------------------------------------------------------------
+-- produtovenda ---------------------------------------------------------------
 CREATE OR REPLACE PROCEDURE public.registro_produto_venda (
 	IN p_valorunitario NUMERIC(15,4),
 	IN p_quantidade BIGINT,
@@ -332,7 +332,7 @@ CREATE OR REPLACE PROCEDURE public.registro_produto_venda (
 	IN p_valortotal NUMERIC(15,4),
 	IN p_vendaid BIGINT,
 	IN p_produtoid BIGINT
-) LANGUAGE PLPGSQL AS 
+) LANGUAGE PLpgSQL AS 
 $$
 BEGIN 
 	INSERT INTO public.produtovenda (
@@ -350,5 +350,5 @@ BEGIN
 		p_vendaid,
 		p_produtoid
 	);
-END
+END;
 $$;
