@@ -146,6 +146,7 @@ CREATE TABLE IF NOT EXISTS public.comissao (
 	codigointerno BIGINT DEFAULT nextval('codigointerno_seq'),
 	status CHAR(1) DEFAULT 'D' NOT NULL,
 	valor NUMERIC(15,4) NOT NULL,
+	percentual NUMERIC(15,4) NOT NULL,
 	datahoracriacao TIMESTAMP WITH TIME ZONE NOT NULL,
 	usuarioid BIGINT NOT NULL,
 	vendaid BIGINT UNIQUE NOT NULL 

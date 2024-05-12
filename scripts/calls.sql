@@ -124,7 +124,7 @@ CALL cadastro_produto ('9002490240875', 'ENERGÉTICO RED BULL COCO EDITION SABOR
 CALL cadastro_produto ('9002490235192', 'ENERGÉTICO RED BULL AÇAÍ EDITION SABOR AÇAÍ 250ML', 11.99);
 
 -- estoque 'inventario/contagem' ----------------------------------------------
-CALL inventario_produto_estoque(6, 1);
+CALL inventario_produto_estoque(0, 1);
 SELECT * FROM estoque;
 DELETE FROM estoque;
 
@@ -141,12 +141,14 @@ CALL recebimento_produto_nota_fiscal_compra (6, 5.99, 0.00, 35.94, 3, 1);
 CALL recebimento_produto_nota_fiscal_compra (6, 5.99, 0.00, 35.94, 4, 1);
 CALL recebimento_produto_nota_fiscal_compra (6, 5.99, 0.00, 35.94, 2, 1);
 CALL recebimento_produto_nota_fiscal_compra (6, 5.99, 0.00, 35.94, 1, 1);
--- SELECT * FROM produtonotafiscalcompra;
+SELECT * FROM produtonotafiscalcompra;
 
 -- venda ----------------------------------------------------------------------
 CALL registro_venda (9.99, 35, 8, 12);
--- SELECT * FROM venda;
+SELECT * FROM venda;
 
 -- produto venda --------------------------------------------------------------
-CALL registro_produto_venda (9.99, 1, 0.00, 9.99, 1, 1);
--- SELECT * FROM produtovenda;
+CALL registro_produto_venda (9.99, 1, 0.00, 9.99, 20, 1);
+SELECT * FROM produtovenda;
+
+SELECT * FROM comissao;

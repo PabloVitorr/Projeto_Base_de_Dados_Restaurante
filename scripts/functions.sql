@@ -1,5 +1,5 @@
--- adiciona estoque compra ----------------------------------------------------
-CREATE OR REPLACE FUNCTION public.movivimentacao_estoque_compra() 
+-- movimentacao estoque compra ------------------------------------------------
+CREATE OR REPLACE FUNCTION public.movimentacao_estoque_compra() 
 RETURNS TRIGGER AS
 $$
 BEGIN 
@@ -24,9 +24,7 @@ RETURN NULL;
 END
 $$ LANGUAGE PLpgSQL;
 
--- DROP FUNCTION public.adiciona_estoque(); 
-
--- remove estoque venda -------------------------------------------------------
+-- movimentacao estoque venda -------------------------------------------------
 CREATE OR REPLACE FUNCTION public.movimentacao_estoque_venda()
 RETURNS TRIGGER AS 
 $$
@@ -54,12 +52,40 @@ END
 $$ LANGUAGE PLpgSQL;
 
 -- calculo de comissao --------------------------------------------------------
-CREATE OR REPLACE FUNCTION public.calculo_comissao()
+CREATE OR REPLACE FUNCTION public.calculo_comissao_venda()
 RETURNS TRIGGER AS 
 $$
-	INSERT INTO comissao ()
+DECLARE 
+	v_valor NUMERIC(15,4);
+	v_percentual NUMERIC(15,4);
+BEGIN 
+	v_percentual := 10;
+	
+	IF (TG_OP = 'INSERT') THEN
+		v_valor := (NEW.valortotal * (v_percentual/100.0));
+		
+		INSERT INTO public.comissao (
+			valor, 
+			percentual, 
+			datahoracriacao, 
+			usuarioid, 
+			vendaid 
+		) VALUES (
+			v_valor, 
+			v_percentual, 
+			NEW.datahoracriacao, 
+			NEW.usuarioid, 
+			NEW.id
+		);
+	
+	ELSIF (TG_OP = 'UPDATE') THEN
+		v_valor := (NEW.valortotal * (v_percentual/100.0));
+	
+		UPDATE comissao SET valor = v_valor;
+	END IF;
+RETURN NULL;
+END
 $$ LANGUAGE PLpgSQL;
 
-SELECT * FROM comissao;
-
+SELECT * FROM venda;
 SELECT * FROM comissao;
