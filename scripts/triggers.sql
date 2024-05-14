@@ -15,5 +15,3 @@ CREATE OR REPLACE TRIGGER t_calculo_comissao_venda
 AFTER INSERT OR UPDATE ON public.venda 
 FOR EACH ROW 
 EXECUTE FUNCTION public.calculo_comissao_venda();
-
-DROP TRIGGER t_calculo_comissao_venda ON produtovenda

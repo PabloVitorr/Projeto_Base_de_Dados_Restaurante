@@ -86,6 +86,3 @@ BEGIN
 RETURN NULL;
 END
 $$ LANGUAGE PLpgSQL;
-
-SELECT * FROM venda;
-SELECT * FROM comissao;
