@@ -1,4 +1,4 @@
--- movimentacao estoque compra ------------------------------------------------
+-- movimentacao/atualizacao estoque compra ------------------------------------------------
 CREATE OR REPLACE FUNCTION public.movimentacao_estoque_compra() 
 RETURNS TRIGGER AS
 $$
@@ -24,7 +24,7 @@ RETURN NULL;
 END
 $$ LANGUAGE PLpgSQL;
 
--- movimentacao estoque venda -------------------------------------------------
+-- movimentacao/atualizacao estoque venda -------------------------------------------------
 CREATE OR REPLACE FUNCTION public.movimentacao_estoque_venda()
 RETURNS TRIGGER AS 
 $$

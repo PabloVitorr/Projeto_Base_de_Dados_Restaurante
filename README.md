@@ -6,29 +6,93 @@
 
 <br/>
 
-Repositorio criado com o intuito de documentar a criacao de uma pequena base de dados para treinar os conteúdos abordados no livro [**PostgreSQL Banco de dados para aplicações web modernas**](https://www.google.com.br/books/edition/PostgreSQL/KlFVDgAAQBAJ?hl=pt-BR&gbpv=0&kptab=overview) paralelamente a leitura do mesmo.
+Repositório criado com o intuito de documentar a criação de uma pequena base de dados para treinar os conteúdos abordados no livro [**PostgreSQL Banco de dados para aplicações web modernas**](https://www.google.com.br/books/edition/PostgreSQL/KlFVDgAAQBAJ?hl=pt-BR&gbpv=0&kptab=overview) paralelamente a leitura do mesmo.
 
-O projeto trabalha com um cenário onde é solicitado o desenvolvimento de uma base de dados para armazenamento dos dados gerados por um **restaurante** onde as **operações** e **restrições** são realizadas **diretamente na base de dados**.
+O projeto trabalha com um cenário onde é solicitado o desenvolvimento de uma base de dados para atender a demanda dos dados gerados por um **restaurante** onde as **operações** e **restrições** são realizadas **diretamente na base de dados**.
 
 <br/>
 
-## **Instruções de preparação do ambiente**
-
-### **Ferramentas utilizadas**
-- **VMware**
+## **Ferramentas utilizadas**
+- **Visual Paradigm Community Edition**
+- **Virtualbox**
 - **Oracle Linux 9.3**
 - **PostgreSQL**
 - **pgAdmin4**
 
-### **Etapas para instalação**
+### **Preparação do ambiente**
 
-### **Processo de desenvolvimento da base de dados**
+- Aplicação Visual Paradigm, utilizada para desenvolvimento do diagrama ER do projeto disponível na [**página oficial**](https://www.visual-paradigm.com/download/community.jsp) para download
 
-- Diagrama ER
-- Entities
-- Constraints
-- Sequences
-- Procedures
-- Calls
-- Functions
-- Triggers
+- Aplicação **VMware** utilizada para criação da **VM** disponível na [**página oficial**](https://www.vmware.com/content/vmware/vmware-published-sites/us/products/workstation-player/workstation-player-evaluation.html.html) para download
+
+- Iso do **S.O** **Oracle Linux 9.3** utilizado no projeto disponivel na [**página oficial**](https://yum.oracle.com/oracle-linux-isos.html) para download
+
+<br/>
+
+- Instalação do PostgreSQL realizada seguindo a [**documentação oficial**](https://www.postgresql.org/download/linux/redhat/)
+  - Atualizar o sistema
+  - 
+    ```bash
+    sudo yum update
+    ```
+
+  - Instale o repositório RPM
+    ```bash
+    sudo dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-9-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+    ```
+
+  - Desative o módulo PostgreSQL integrado
+    ```bash
+    sudo dnf -qy module disable postgresql
+    ```
+  
+  - Insale o PostgreSQL
+    ```bash
+    sudo dnf install -y postgresql14-server
+    ```
+
+  - Opcionalmente, inicialize o banco de dados e habilite o início automático
+    ```bash
+    sudo /usr/pgsql-14/bin/postgresql-14-setup initdb
+    ```
+
+    ```bash
+    sudo systemctl enable postgresql-14
+    ```
+
+    ```bash
+    sudo systemctl start postgresql-14
+    ```
+
+<br/>
+
+- Instalação do pgAdmin4 realizada seguindo a [**documentação oficial**](https://www.pgadmin.org/download/pgadmin-4-rpm/)
+
+  - Instalação nos modos desktop e web
+    ```bash
+    sudo yum install pgadmin4
+    ```
+
+<br/>
+
+- Definir senha para o usuario **postgres**
+
+  - Acesse o terminal como root e execute os seguintes comandos
+    ```bash
+    sudo -i -u postgres psql
+    ```
+  
+    ```sql
+    ALTER USER postgres WITH ENCRYPTED PASSWORD '<password>';
+    ```
+
+### **Scripts de criação da base de dados, inserção de dados e consultas**
+
+- [**Diagrama ER**](./documentacao/Base%20de%20dados%20restaurante.pdf)
+- [**Entities**](./entities.sql)
+- [**Constraints**](./constraints.sql)
+- [**Sequences**](./sequences.sql)
+- [**Procedures**](./procedures.sql)
+- [**Calls**](./calls.sql)
+- [**Functions**](./functions.sql)
+- [**Triggers**](./triggers.sql)
