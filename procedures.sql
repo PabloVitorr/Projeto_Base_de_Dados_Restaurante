@@ -117,7 +117,7 @@ CREATE OR REPLACE PROCEDURE public.cadastro_cidade (
 	IN p_nome VARCHAR(100),
 	IN p_estadoid BIGINT
 ) LANGUAGE PLpgSQL AS 
-$$;
+$$
 BEGIN 
 	INSERT INTO public.cidade (nome, estadoid) VALUES (p_nome, p_estadoid);
 END;
