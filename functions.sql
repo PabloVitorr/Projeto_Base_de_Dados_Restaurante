@@ -1,7 +1,7 @@
 -- movimentacao/atualizacao estoque compra ------------------------------------------------
 CREATE OR REPLACE FUNCTION public.movimentacao_estoque_compra() 
 RETURNS TRIGGER AS
-$$
+$body$
 BEGIN 
 	IF (TG_OP = 'INSERT') THEN 
 		IF NEW.produtoid IN (SELECT produtoid FROM estoque) THEN 
@@ -22,12 +22,12 @@ BEGIN
 	END IF;
 RETURN NULL;
 END
-$$ LANGUAGE PLpgSQL;
+$body$ LANGUAGE PLpgSQL;
 
 -- movimentacao/atualizacao estoque venda -------------------------------------------------
 CREATE OR REPLACE FUNCTION public.movimentacao_estoque_venda()
 RETURNS TRIGGER AS 
-$$
+$body$
 BEGIN 
 	IF (TG_OP = 'INSERT') THEN
 		IF NEW.produtoid IN (SELECT produtoid FROM estoque) THEN 
@@ -49,12 +49,12 @@ BEGIN
 	END IF;
 RETURN NULL;
 END
-$$ LANGUAGE PLpgSQL;
+$body$ LANGUAGE PLpgSQL;
 
 -- calculo de comissao --------------------------------------------------------
 CREATE OR REPLACE FUNCTION public.calculo_comissao_venda()
 RETURNS TRIGGER AS 
-$$
+$body$
 DECLARE 
 	v_valor NUMERIC(15,4);
 	v_percentual NUMERIC(15,4);
@@ -85,4 +85,4 @@ BEGIN
 	END IF;
 RETURN NULL;
 END
-$$ LANGUAGE PLpgSQL;
+$body$ LANGUAGE PLpgSQL;
