@@ -18,8 +18,7 @@ SELECT
 	estado.sigla AS estado,
 	pais.nome AS pais,
 	TO_CHAR(pessoa.datahoracriacao, 'DD/MM/YYYY HH24:MI:SS') AS data_hora_cadastro
-FROM usuario
-LEFT JOIN pessoa ON usuario.pessoaid = pessoa.id
+FROM pessoa 
 LEFT JOIN endereco ON endereco.pessoaid = pessoa.id
 LEFT JOIN logradouro ON endereco.logradouroid = logradouro.id
 LEFT JOIN bairro ON logradouro.bairroid = bairro.id
