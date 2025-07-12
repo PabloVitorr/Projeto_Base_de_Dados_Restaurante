@@ -89,3 +89,4 @@ O projeto trabalha com um cenário onde é solicitado o desenvolvimento de uma b
 - [**Functions**](./functions.sql)
 - [**Triggers**](./triggers.sql)
 - [**Inserts - Copy**](./copy.sql)
+- [**Views**](./views.sql)
